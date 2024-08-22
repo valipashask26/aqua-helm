@@ -47,13 +47,14 @@ global:
 # If serviceAccount.create=false and serviceAccount.name defined then will be used serviceAccount with defined name
 # but in this case serviceAccount should be created manually before chart deploying
 #####################
-# If serviceAccount.create=create and serviceAccount.name not defined
+# If serviceAccount.create=true and serviceAccount.name not defined
 # then will be created a serviceAccount with name <Chart ReleaseName>-sa
 #####################
-# If serviceAccount.create=create and serviceAccount.name defined
+# If serviceAccount.create=true and serviceAccount.name defined
 # then will be created a serviceAccount with name provided name
 serviceAccount:
   create: true
+  attachImagePullSecret: true
   name: ""
 
 # Replica count
@@ -279,11 +280,12 @@ TLS:
 # extraEnvironmentVars is a list of extra environment variables to set in the kube-enforcer deployment
 # https://docs.aquasec.com/docs/kubeenforcer-variables
 # The variables could be provided via values.yaml file as shown below
-# or using cli command, for example:  --set extraEnvironmentVars.http_proxy="1.1.1.1",extraEnvironmentVars.https_proxy="2.2.2.2"
+# or using cli command, for example:  
+# --set extraEnvironmentVars.http_proxy="1.1.1.1",extraEnvironmentVars.https_proxy="2.2.2.2",no_proxy=".svc.cluster.local"
 extraEnvironmentVars: {}
   # http_proxy: < >
   # https_proxy: < >
-  # no_proxy: < >
+  # no_proxy: < > e.g. "srv.cluster.local". KE must be able to reach Kube API
   # ENV_NAME: value
 
 # extraSecretEnvironmentVars is a list of extra environment variables to set in the enforcer daemonSet.
@@ -458,6 +460,7 @@ kubeEnforcerAdvance:
 enforcer:
   serviceAccount:
     create: true
+    attachImagePullSecret: true
     name: ""
 
   clusterRole:
@@ -583,7 +586,8 @@ enforcer:
   # extraEnvironmentVars is a list of extra environment variables to set in the enforcer daemonSet.
   # https://docs.aquasec.com/docs/enforcer-optional-variables
   # The variables could be provided via values.yaml file as shown below
-  # or using cli command, for example:  --set extraEnvironmentVars.http_proxy="1.1.1.1",extraEnvironmentVars.https_proxy="2.2.2.2"
+  # or using cli command, for example:  
+  # --set enforcer.extraEnvironmentVars.http_proxy="1.1.1.1",enforcer.extraEnvironmentVars.https_proxy="2.2.2.2"
   extraEnvironmentVars: {}
     # http_proxy: < >
     # https_proxy: < >
